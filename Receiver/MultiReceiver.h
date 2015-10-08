@@ -1,5 +1,3 @@
-// MultiReceiver.h
-
 #ifndef _MULTIRECEIVER_h
 #define _MULTIRECEIVER_h
 
@@ -25,5 +23,5 @@ private:
 	String ReceiveData();
 public:
 	MultiReceiver(byte pinId);
-	String Receive();
+	String ReceiveMulti();
 };

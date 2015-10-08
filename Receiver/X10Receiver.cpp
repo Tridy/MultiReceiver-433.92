@@ -1,7 +1,7 @@
 #include "X10Receiver.h"
 
 const int MAX_READINGS = 22;
-bool _readValues[MAX_READINGS];
+bool _readX10Values[MAX_READINGS];
 const int LONG_INTRO_LENGTH = 3300;
 
 String _buttonNames [] = { "Mute", "", "Sleep", "", "Disc", "", "", "", "VolumeDown", "VolumeUp", "", "ChannelUp", "ChannelDown", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "TeleText", "Zero", "RecordProgram", "", "Up", "Go", "Archive", "Left", "OK", "Right", "Back", "PreviousChapter", "Down", "NextChapter", "Rewind", "Play", "FastForward", "Record", "Stop", "Pause", "", "", "", "", "", "Information", "Clear", "Program", "Red", "Green", "Yellow", "Blue", "Enter", "Star", "Hash" };
@@ -12,7 +12,7 @@ X10Receiver::X10Receiver(byte pinId)
 	_pinId = pinId;
 }
 
-String X10Receiver::Receive()
+String X10Receiver::ReceiveX10()
 {
 	ResetVariables();
 	ReadLows();
@@ -27,7 +27,7 @@ void X10Receiver::ResetVariables()
 	_counter = 0;
 	for (size_t i = 0; i < MAX_READINGS; i++)
 	{
-		_readValues[i] = 0;
+		_readX10Values[i] = 0;
 	}
 }
 
@@ -36,7 +36,7 @@ void X10Receiver::ReadLows()
 	while (_timing < LONG_INTRO_LENGTH && _counter < MAX_READINGS)
 	{
 		_timing = pulseIn(_pinId, LOW, 1000000);
-		_readValues[_counter] = _timing > 750;
+		_readX10Values[_counter] = _timing > 750;
 		_counter = _counter + 1;
 	}
 }
@@ -51,6 +51,7 @@ String X10Receiver::Decode()
 	if (buttonCode - readButtonCode < 2)
 	{
 		String buttonName = _buttonNames[buttonIndex];
+
 		if (buttonName != "")
 		{
 			return buttonName;
@@ -66,7 +67,7 @@ byte X10Receiver::GetValueFromReceivedValuesRange(byte firstIndex, byte lastInde
 
 	for (size_t i = firstIndex; i <= lastIndex; i++)
 	{
-		value = value | _readValues[i];
+		value = value | _readX10Values[i];
 
 		if (i < lastIndex)
 		{

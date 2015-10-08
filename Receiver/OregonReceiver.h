@@ -15,18 +15,13 @@ class OregonReceiver
 
 public:
 	OregonReceiver(int pinId);
-	String Receive();
+	String ReceiveOregon();
 
 private:
-
-	unsigned long _timing;
-	bool _readValues[200];
-	String _receivedResult;
-	int _pinId;
-	unsigned long _extractedValues;
-	byte _counter;
-
-	void ResetVariables();
+	String _receivedOregonResult;
+	byte _oregonPinId;
+	byte _oregonCounter;
+	bool* _readOregonValues;
 	void ReceiveSignal();
 	void ReadValues();
 };

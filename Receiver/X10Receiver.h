@@ -1,5 +1,3 @@
-// X10Receiver.h
-
 #ifndef _X10RECEIVER_h
 #define _X10RECEIVER_h
 
@@ -24,5 +22,5 @@ private:
 	String Decode();
 public:
 	X10Receiver(byte pinId);
-	String Receive();
+	String ReceiveX10();
 };

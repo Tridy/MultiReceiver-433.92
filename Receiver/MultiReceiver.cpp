@@ -6,13 +6,15 @@ const byte REMOTE_CONTROL = 1;
 const byte WEATHER_STATION = 2;
 const byte NONE = 0;
 
+X10Receiver _x10Receiver(8);
+OregonReceiver _oregonReceiver(8);
 
 MultiReceiver::MultiReceiver(byte pinId)
 {
 	_pinId = pinId;
 }
 
-String MultiReceiver::Receive()
+String MultiReceiver::ReceiveMulti()
 {
 	pinMode(_pinId, INPUT);
 	ResetVariables();
@@ -41,8 +43,6 @@ void MultiReceiver::WaitForLongLow()
 		t2 = micros();
 		GetHighAndLowWithinLengthRanges();
 	}
-
-	// Serial.print("HIGH=" + String(_highLength)  + ", LOW=" + String(_previousLowLength));
 }
 
 void MultiReceiver::GetHighAndLowWithinLengthRanges()
@@ -50,29 +50,23 @@ void MultiReceiver::GetHighAndLowWithinLengthRanges()
 	if (_highLength > 950 && _highLength < 1050 && _previousLowLength > 950 && _previousLowLength < 1050)
 	{
 		_signalIntroType = WEATHER_STATION;
-		Serial.println("WS");
-		//Serial.print("HIGH=" + String(_highLength)  + ", LOW=" + String(_previousLowLength));
 	}
 	else if (_highLength > 3800 && _highLength < 3900 && _previousLowLength > 3550 && _previousLowLength < 3650)
 	{
 		_signalIntroType = REMOTE_CONTROL;
-		// Serial.println("RC");
 	}
 }
 
 String MultiReceiver::ReceiveData()
 {
-	// Serial.println("R");
 	if (_signalIntroType == REMOTE_CONTROL)
 	{
-		return X10Receiver(_pinId).Receive();
-		// return "REMOTE";
+		return _x10Receiver.ReceiveX10();
 	}
-	else if (_signalIntroType == WEATHER_STATION)
+	
+	if (_signalIntroType == WEATHER_STATION)
 	{
-		//Serial.println("O.R.");
-		// return OregonReceiver(_pinId).Receive();
-		return "OREGON MOCK";
+		return _oregonReceiver.ReceiveOregon();
 	}
 
 	return "NONE";

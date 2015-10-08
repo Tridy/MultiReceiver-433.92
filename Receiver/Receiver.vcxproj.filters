@@ -24,13 +24,13 @@
     <ClInclude Include="MultiReceiver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OregonDecoder.h">
+    <ClInclude Include="X10Receiver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OregonReceiver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="X10Receiver.h">
+    <ClInclude Include="OregonDecoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,13 +38,13 @@
     <ClCompile Include="MultiReceiver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OregonDecoder.cpp">
+    <ClCompile Include="X10Receiver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OregonReceiver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="X10Receiver.cpp">
+    <ClCompile Include="OregonDecoder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

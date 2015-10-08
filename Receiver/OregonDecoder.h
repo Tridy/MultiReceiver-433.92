@@ -13,16 +13,11 @@
 class OregonDecoder
 {
 public:
-	OregonDecoder();
-	String DecodeValues(bool readValues[], byte count);
+	OregonDecoder(byte mock);
+	String DecodeOregonValues(bool *readValues, byte count1);
 
 private:
-	byte _counter;
-	String _result;
-	byte _reversedValues[22];
-	byte _decodedValues[84];
-
-	void ReverseValues();
-	void BuildResult();
-	String GetHexValue(byte index);
+	void ReverseOregonValues();
+	void BuildOregonResult();
+	String GetHexValue(byte itemIndex);
 };
