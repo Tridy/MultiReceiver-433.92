@@ -17,7 +17,12 @@ public:
 	String DecodeOregonValues(bool *readValues, byte count1);
 
 private:
+	String _resultDecodedOregonMessage;
+	byte _decodedOregonValues[84];
+	int _oregonValuesToBuildFrom[22];
+	byte _countToReverse;
+	void ClearOregonValues();
 	void ReverseOregonValues();
 	void BuildOregonResult();
-	String GetHexValue(byte itemIndex);
+	String GetHexValue(int itemIndex);
 };
