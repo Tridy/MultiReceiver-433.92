@@ -14,13 +14,14 @@ class OregonDecoder
 {
 public:
 	OregonDecoder(byte mock);
-	String DecodeOregonValues(bool *readValues, byte count1);
+	String Decode(bool *readValues);
 
 private:
 	String _resultDecodedOregonMessage;
-	byte _decodedOregonValues[84];
+	bool _oregonValues[90];
 	int _oregonValuesToBuildFrom[22];
 	byte _countToReverse;
+
 	void ClearOregonValues();
 	void ReverseOregonValues();
 	void BuildOregonResult();

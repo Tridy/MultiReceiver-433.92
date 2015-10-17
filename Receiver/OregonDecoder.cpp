@@ -1,32 +1,29 @@
 #include "OregonDecoder.h"
 
-
-
 OregonDecoder::OregonDecoder(byte mock)
 {
 
 }
 
-String OregonDecoder::DecodeOregonValues(bool* valuesToDecode, byte count1)
+String OregonDecoder::Decode(bool* valuesToDecode)
 {
 	_resultDecodedOregonMessage = "N-A";
-
 	bool doubleShortAsOne = true;
 
-	byte c = 1;
+	byte c = 0;
 	byte d = 0;
 
-	while (c < count1)
+	while (c < 180)
 	{
 		if (valuesToDecode[c])
 		{
 			doubleShortAsOne = !doubleShortAsOne;
-			_decodedOregonValues[d] = doubleShortAsOne;
+			_oregonValues[d] = doubleShortAsOne;
 			c++;
 		}
 		else
 		{
-			_decodedOregonValues[d] = doubleShortAsOne;
+			_oregonValues[d] = doubleShortAsOne;
 			c += 2;
 		}
 
@@ -44,7 +41,7 @@ String OregonDecoder::DecodeOregonValues(bool* valuesToDecode, byte count1)
 
 void OregonDecoder::ClearOregonValues()
 {
-	for (size_t i = 0; i < 22; i++)
+	for (byte i = 0; i < 22; i++)
 	{
 		_oregonValuesToBuildFrom[i] = 0;
 	}
@@ -54,11 +51,7 @@ void OregonDecoder::ReverseOregonValues()
 {
 	_oregonValuesToBuildFrom[0] = 15;
 
-	int i;
-
-	Serial.println("");
-
-	for (i = 1; i < _countToReverse; i++)
+	for (byte i = 1; i < _countToReverse; i++)
 	{
 		byte val = 0;
 
@@ -66,7 +59,7 @@ void OregonDecoder::ReverseOregonValues()
 
 		for (j = 3; j >= 0; j = j - 1)
 		{
-			bool bit = _decodedOregonValues[(i * 4) + j];
+			bool bit = _oregonValues[(i * 4) + j];
 			val = val ^ bit;
 
 			if (j > 0)
@@ -81,71 +74,34 @@ void OregonDecoder::ReverseOregonValues()
 
 void OregonDecoder::BuildOregonResult()
 {
-	
 	int checkSumResult = 0;
 
-	int hh;
-	for (hh = 0; hh < 16; hh++)
-	{
-		Serial.print(",");
-		Serial.print(_oregonValuesToBuildFrom[hh]);
-	}
-
-	Serial.println("");
-
-	int cs;
-	for (cs = 0; cs < 15; cs++)
+	for (byte cs = 0; cs < 15; cs++)
 	{
 		checkSumResult += _oregonValuesToBuildFrom[cs];
 	}
 
 	String sensorId = GetHexValue(0) + GetHexValue(1) + GetHexValue(2) + GetHexValue(3);
-	Serial.print("sensorId: ");
-	Serial.println(sensorId);
 	String channel = GetHexValue(4);
-	Serial.print("channel:");
-	Serial.println(channel);
 	String rollingCode = GetHexValue(5) + GetHexValue(6);
-	Serial.print("rollingCode:");
-	Serial.println(rollingCode);
 	String lowBattery = _oregonValuesToBuildFrom[7] == 1 ? "Yes" : "No";
-	Serial.print("lowBattery:");
-	Serial.println(lowBattery);
 	String temperature = (_oregonValuesToBuildFrom[11] == 0 ? "" : "-") + GetHexValue(10) + GetHexValue(9) + "." + GetHexValue(8);
-	Serial.print("temperature:");
-	Serial.println(temperature);
 	String humidity = GetHexValue(13) + GetHexValue(12);
-	Serial.print("humidity:");
-	Serial.println(humidity);
 	String checksum = GetHexValue(16) + GetHexValue(15);
-	Serial.print("checksum:");
-	Serial.println(checksum);
 
-	String combinedResult = String(
-		"Sensor Id: " + sensorId +
-		"\nChannel: " + channel +
-		"\nRolling Code: " + rollingCode +
-		"\nLow Battery: " + lowBattery +
-		"\nTemperature: " + temperature +
-		"\nHumidity: " + humidity +
-		"\nChecksum: " + checksum);
-
-	Serial.println("b9");
-	Serial.println("RESULT: " + combinedResult);
-	Serial.println("");
+	String combinedResult = String(sensorId + "," + 
+		channel + "," + 
+		rollingCode + "," + 
+		lowBattery + "," + 
+		temperature + "," + 
+		humidity + "," + 
+		checksum + "," + 
+		String(checkSumResult, HEX));
 
 	_resultDecodedOregonMessage = combinedResult;
 }
 
 String OregonDecoder::GetHexValue(int itemIndex)
 {
-	int decimalValue = _oregonValuesToBuildFrom[itemIndex];
-	Serial.print("DEC=");
-	Serial.print(decimalValue);
-	String blah = String(15, HEX);
-	Serial.print(", [");
-	Serial.print(itemIndex);
-	Serial.print("] HEX VALUE: ");
-	Serial.println(blah);
-	return blah;
+	return String(_oregonValuesToBuildFrom[itemIndex], HEX);
 }
