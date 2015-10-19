@@ -35,7 +35,6 @@ String OregonDecoder::Decode(bool* valuesToDecode)
 	ClearOregonValues();
 	ReverseOregonValues();
 	BuildOregonResult();
-
 	return _resultDecodedOregonMessage;
 }
 

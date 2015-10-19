@@ -25,9 +25,9 @@ private:
 	void GetHighAndLowWithinLengthRanges();
 	String ReceiveData();
 	byte SimplifyByteValue(byte originalValue);
-	bool IsSignalOregon(byte position);
-	bool IsSignalX10(byte position);
-	void ExtractSignalReadings(byte position);
+	bool IsSignalOregon(size_t positionIndex);
+	bool IsSignalX10(size_t positionIndex);
+	void ExtractSignalReadings(size_t positionIndex);
 	void ClearExtractedValues();
 public:
 	MultiReceiver(byte pinId);

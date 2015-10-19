@@ -2,7 +2,6 @@
 
 X10Decoder::X10Decoder(byte mock)
 {
-
 }
 
 String X10Decoder::Decode(bool* readings)

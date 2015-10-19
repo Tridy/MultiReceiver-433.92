@@ -26,6 +26,7 @@ MultiReceiver::MultiReceiver(byte pinId)
 String MultiReceiver::ReceiveMulti()
 {
 	pinMode(_pinId, INPUT);
+
 	ResetVariables();
 	WaitForLongLow();
 	RearrangeReadings();
@@ -65,8 +66,6 @@ void MultiReceiver::WaitForLongLow()
 			_breakIndex = 0;
 		}
 	}
-
-	// Serial.println(low);
 }
 
 void MultiReceiver::RearrangeReadings()
@@ -107,14 +106,14 @@ byte MultiReceiver::SimplifyByteValue(byte originalValue)
 
 String MultiReceiver::ReceiveData()
 {
-	for (byte i = MAX_READINGS - MIN_SIGNAL_LENGTH; i >= 0; i-=2)
+	for (size_t rd = MAX_READINGS - MIN_SIGNAL_LENGTH; rd > 0; rd = rd -2)
 	{
-		if (IsSignalOregon(i))
+		if (IsSignalOregon(rd))
 		{
 			return _oregonDecoder.Decode(_extractedValues);
 		}
 
-		if (IsSignalX10(i))
+		if (IsSignalX10(rd))
 		{
 			return _x10Decoder.Decode(_extractedValues);
 		}
@@ -123,60 +122,65 @@ String MultiReceiver::ReceiveData()
 	return "ERROR";
 }
 
-bool MultiReceiver::IsSignalX10(byte position)
+bool MultiReceiver::IsSignalX10(size_t positionIndex)
 {
 	const byte INTRO_LENGTH = 4;
 
-	if (position > MAX_READINGS - INTRO_LENGTH)
+	if (positionIndex > MAX_READINGS - INTRO_LENGTH)
 	{
 		return false;
 	}
 
-	bool isMatch = _orderedReadings[position] == 1 &&
-		_orderedReadings[position + 1] == 3 &&
-		_orderedReadings[position + 2] == 3 &&
-		_orderedReadings[position + 3] == 1;
+	bool isMatch = _orderedReadings[positionIndex] == 1 &&
+		_orderedReadings[positionIndex + 1] == 3 &&
+		_orderedReadings[positionIndex + 2] == 3 &&
+		_orderedReadings[positionIndex + 3] == 1;
 
 	if (!isMatch)
 	{
 		return false;
 	}
 
-	ExtractSignalReadings(position + INTRO_LENGTH);
+	ExtractSignalReadings(positionIndex + INTRO_LENGTH);
 
 	return true;
 }
 
-bool MultiReceiver::IsSignalOregon(byte position)
+bool MultiReceiver::IsSignalOregon(size_t positionIndex)
 {
 	const byte INTRO_LENGTH = 6;
 
-	if (position > MAX_READINGS - INTRO_LENGTH)
+	if (positionIndex < 1)
 	{
 		return false;
 	}
 
-	bool isMatch = _orderedReadings[position] == 1 &&
-		_orderedReadings[position + 1] == 2 &&
-		_orderedReadings[position + 2] == 2 &&
-		_orderedReadings[position + 3] == 2 &&
-		_orderedReadings[position + 4] == 2 &&
-		_orderedReadings[position + 5] == 1;
+  if (positionIndex > MAX_READINGS - INTRO_LENGTH)
+  {
+    return false;
+  }
+  
+	bool isMatch = _orderedReadings[positionIndex] == 1 &&
+		_orderedReadings[positionIndex + 1] == 2 &&
+		_orderedReadings[positionIndex + 2] == 2 &&
+		_orderedReadings[positionIndex + 3] == 2 &&
+		_orderedReadings[positionIndex + 4] == 2 &&
+		_orderedReadings[positionIndex + 5] == 1;
 
 	if (!isMatch)
 	{
 		return false;
 	}
 
-	ExtractSignalReadings(position + INTRO_LENGTH -1);
+	ExtractSignalReadings(positionIndex + INTRO_LENGTH -1);
 
 	return true;
 }
 
-void MultiReceiver::ExtractSignalReadings(byte position)
+void MultiReceiver::ExtractSignalReadings(size_t positionIndex)
 {
-	for (size_t i = position; i < MAX_READINGS; i++)
+	for (size_t i = positionIndex; i < MAX_READINGS; i++)
 	{
-		_extractedValues[i - position] = _orderedReadings[i] > 1;
+		_extractedValues[i - positionIndex] = _orderedReadings[i] > 1;
 	}
 }
